@@ -30,6 +30,9 @@ func recursiveLoop(k lua.LValue, v lua.LValue) {
 	if str, ok := k.(lua.LString); ok {
 		key = str.String()
 	}
+	if n, ok := k.(lua.LNumber); ok {
+		key = n.String()
+	}
 	if tbl, ok := v.(*lua.LTable); ok {
 		keys = append(keys, key)
 		tbl.ForEach(recursiveLoop)
