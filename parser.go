@@ -1,7 +1,9 @@
 package parser
 
 import (
+	"bufio"
 	lua "github.com/yuin/gopher-lua"
+	"os"
 )
 
 var (
@@ -16,6 +18,22 @@ func Parse(s string, variable string) (map[string]interface{}, error) {
 	l := lua.NewState()
 	defer l.Close()
 	if err := l.DoString(s); err != nil {
+		return result, err
+	}
+	lv := l.GetGlobal(variable)
+	if tbl, ok := lv.(*lua.LTable); ok {
+		tbl.ForEach(recursiveLoop)
+	}
+	return result, nil
+}
+
+func ParseFile(f *os.File, variable string) (map[string]interface{}, error) {
+	keys = []string{}
+	result = map[string]interface{}{}
+	l := lua.NewState()
+	defer l.Close()
+	reader := bufio.NewReader(f)
+	if _, err := l.Load(reader, variable); err != nil {
 		return result, err
 	}
 	lv := l.GetGlobal(variable)
